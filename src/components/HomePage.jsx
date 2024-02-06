@@ -1,4 +1,5 @@
-import { login } from "@/utils/loginUtils";
+import { login } from "@/pages/api/customer";
+import { appToast } from "@/utils/appToast";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -17,7 +18,16 @@ const HomePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(username, password,router)
+    try {
+      const data = await login(username, password);
+      if (data.token) {
+        document.cookie = `token=${data.token}; SameSite=None; Secure`;
+        router.push(`/customer/dashboard`);
+        appToast("success", data.message);
+      }
+    } catch (error) {
+      appToast("error", error.message);
+    }
   };
 
   return (

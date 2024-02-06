@@ -2,48 +2,48 @@ import CusDataByZipCode from "@/components/CusDataByZipCode";
 import CustomerTable from "@/components/CustomerTable";
 import { appToast } from "@/utils/appToast";
 import React, { useEffect, useState } from "react";
-import { loadData } from "../api/customer";
+import { loadData, logOut } from "../api/customer";
+import { useRouter } from "next/router";
 
 const dashboard = () => {
   const [customerData, setCustomerData] = useState([]);
   const [cusDataByZipCode, setCusDataByZipCode] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   async function loadAllCusData() {
+    setLoading(true);
     try {
-      const data = await loadData(
-        "https://localhost:7113/api/Customer/GetAllCustomers"
-      );
+      const data = await loadData("GetAllCustomers");
       setCustomerData(data);
-      setIsLoading(true);
     } catch (error) {
       appToast("error", error.message);
-      toast
-    }
-    finally{
-      setIsLoading(false);
+    } finally {
+      setLoading(false);
     }
   }
 
   async function loadCusDataByZipCode() {
-    setIsLoading(true);
-    appToast("","Loading Customer list by ZipCode");
+    setLoading(true);
     try {
-      const data = await loadData(
-        "https://localhost:7113/api/Customer/GetCustomerListByZipCode"
-      );
+      const data = await loadData("GetCustomerListByZipCode");
       setCusDataByZipCode(data);
-      setIsLoading(true);
     } catch (error) {
       appToast("error", error.message);
-    }
-    finally{
-      setIsLoading(false);
+    } finally {
+      setLoading(false);
     }
   }
 
   async function handleLogOut() {
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.href = "/";
+    try {
+      const res = await logOut();
+      appToast("success", res.message);
+      document.cookie =
+        "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; SameSite=None; Secure";
+      window.location.href = "/";
+    } catch (error) {
+      appToast("error", error.message);
+    }
   }
 
   useEffect(() => {
@@ -58,22 +58,28 @@ const dashboard = () => {
         <h1 className="text-3xl">Customer Details</h1>
         <button onClick={handleLogOut}>Logout</button>
       </div>
-      <div className="flex flex-col p-4 gap-1">
+      <div className="flex flex-col p-4 gap-2">
         <button
           className="bg-green-500 p-2 hover:bg-green-700"
           onClick={loadAllCusData}
-          disabled={isLoading}
+          disabled={loading}
         >
-          {isLoading ? "Loading..." : "Load All Customer list"}
+          Load All Customer list
         </button>
         <button
           className="bg-blue-500 p-2 hover:bg-blue-700"
           onClick={loadCusDataByZipCode}
-          disabled={isLoading}
+          disabled={loading}
         >
-          {isLoading ? "Loading..." : "Load Customer list by ZipCode"}
+          Load Customer list by ZipCode
         </button>
-        <button onClick={()=>((setCustomerData([]) && setCusDataByZipCode([])))}>Clear </button>
+        <button
+          className="hover:bg-slate-500 p-2"
+          onClick={() => setCustomerData([]) && setCusDataByZipCode([])}
+        >
+          Clear Data
+        </button>
+        {loading && <p className="text-center bg-slate-500">Loading...</p>}
       </div>
       {customerData && (
         <div className="p-4">
