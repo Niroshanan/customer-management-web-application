@@ -5,6 +5,7 @@ const CusDataByZipCode = ({ data }) => {
     <div>
       {data.map((customer) => (
         <div key={customer.zipCode}>
+            <h1 className="text-2xl font-bold text-center mb-4">Customer List Grouped By Zip Code</h1>
             <h1 className="text-2xl font-bold mb-4">{customer.zipCode}</h1>
             <table className="table-auto w-full">
                 <thead>
