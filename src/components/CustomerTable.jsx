@@ -3,6 +3,7 @@ import React from "react";
 const CustomerTable = ({ data }) => {
   return (
     <table className="table-auto w-full">
+      <caption className="text-2xl font-bold text-center mb-4">All Customer List</caption>
       <thead>
         <tr>
           <th className="border px-4 py-2">Customer ID</th>

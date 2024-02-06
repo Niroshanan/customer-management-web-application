@@ -58,9 +58,9 @@ const dashboard = () => {
         <h1 className="text-3xl">Customer Details</h1>
         <button onClick={handleLogOut}>Logout</button>
       </div>
-      <div className="flex flex-col p-4 gap-2">
+      <div className="flex flex-row justify-center p-4 gap-2">
         <button
-          className="bg-green-500 p-2 hover:bg-green-700"
+          className="bg-green-500 p-2 hover:bg-green-700 w-fit"
           onClick={loadAllCusData}
           disabled={loading}
         >
@@ -75,12 +75,15 @@ const dashboard = () => {
         </button>
         <button
           className="hover:bg-slate-500 p-2"
-          onClick={() => setCustomerData([]) && setCusDataByZipCode([])}
+          onClick={() => {
+            setCustomerData([]);
+            setCusDataByZipCode([]);
+          }}
         >
           Clear Data
         </button>
-        {loading && <p className="text-center bg-slate-500">Loading...</p>}
       </div>
+        {loading && <p className="text-center text-xl">Loading...</p>}
       {customerData && (
         <div className="p-4">
           {customerData.length > 0 && <CustomerTable data={customerData} />}
