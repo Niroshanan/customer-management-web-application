@@ -12,7 +12,11 @@ export const login = async (username, password) => {
         body: JSON.stringify({ username, password }),
       }
     );
-    return await response.json();
+    if (response.ok) {
+      return await response.json();
+    } else {
+      throw await response.json();
+    }
   } catch (error) {
     throw error;
   }

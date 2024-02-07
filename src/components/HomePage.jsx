@@ -7,6 +7,7 @@ const HomePage = () => {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -19,14 +20,18 @@ const HomePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await login(username, password);
-      if (data.token) {
-        document.cookie = `token=${data.token}; SameSite=None; Secure`;
+      setLoading(true);
+      const res = await login(username, password);
+      if (res.token) {
+        document.cookie = `token=${res.token}; SameSite=None; Secure`;
         router.push(`/customer/dashboard`);
-        appToast("success", data.message);
+        appToast("success", res.message);
       }
     } catch (error) {
       appToast("error", error.message);
+    }
+    finally{
+      setLoading(false);
     }
   };
 
@@ -46,6 +51,7 @@ const HomePage = () => {
             id="username"
             type="text"
             value={username}
+            required
             onChange={handleUsernameChange}
           />
 
@@ -60,6 +66,7 @@ const HomePage = () => {
             id="password"
             type="password"
             value={password}
+            required
             onChange={handlePasswordChange}
           />
 
@@ -68,8 +75,9 @@ const HomePage = () => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               type="submit"
               id="loginbtn"
+              disabled={loading}
             >
-              Login
+              {loading ? "Loggin In..." : "Login"}
             </button>
           </div>
         </form>
