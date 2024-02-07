@@ -35,6 +35,7 @@ const dashboard = () => {
   }
 
   async function handleLogOut() {
+    setLoading(true);
     try {
       const res = await logOut();
       appToast("success", res.message);
@@ -43,6 +44,8 @@ const dashboard = () => {
       window.location.href = "/";
     } catch (error) {
       appToast("error", error.message);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -56,7 +59,9 @@ const dashboard = () => {
     <div>
       <div className="flex flex-row justify-between p-12">
         <h1 className="text-3xl">Customer Details</h1>
-        <button onClick={handleLogOut}>Logout</button>
+        <button onClick={handleLogOut} disabled={loading}>
+          Log Out
+        </button>
       </div>
       <div className="flex flex-row justify-center p-4 gap-2">
         <button
@@ -78,12 +83,13 @@ const dashboard = () => {
           onClick={() => {
             setCustomerData([]);
             setCusDataByZipCode([]);
+            setLoading(false);
           }}
         >
           Clear Data
         </button>
       </div>
-        {loading && <p className="text-center text-xl">Loading...</p>}
+      {loading && <p className="text-center text-xl">Loading...</p>}
       {customerData && (
         <div className="p-4">
           {customerData.length > 0 && <CustomerTable data={customerData} />}
